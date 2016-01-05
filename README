@@ -1,0 +1,9 @@
+# NFC Integration: files to be added/modified
+git add -f frameworks/base/Android.mk 
+git add -f frameworks/base/core/java/android/nfc/
+git add -f packages/apps/Nfc/
+git add -f hardware/libhardware/include/hardware/nfc.h 
+git add -f external/libnfc-nci/
+git add -f build/target/product/core.mk
+git add -f build/core/tasks/check_boot_jars/package_whitelist.txt
+
