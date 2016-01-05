@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 NXP Semiconductors
+ * Copyright (C) 2015 NXP Semiconductors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,10 +120,9 @@ static NFCSTATUS phNxpNciHal_rf_deactivate()
         {
             NXPLOG_NCIHAL_D("Send the Core Reset NTF to upper layer, which will trigger the recovery\n");
             //Send the Core Reset NTF to upper layer, which will trigger the recovery.
-            send_to_upper_kovio = 0;
             nxpncihal_ctrl.rx_data_len = sizeof(reset_ntf);
             memcpy(nxpncihal_ctrl.p_rx_data, reset_ntf, sizeof(reset_ntf));
-            (*nxpncihal_ctrl.p_nfc_stack_data_cback)(nxpncihal_ctrl.rx_data_len, nxpncihal_ctrl.p_rx_data);
+            //(*nxpncihal_ctrl.p_nfc_stack_data_cback)(nxpncihal_ctrl.rx_data_len, nxpncihal_ctrl.p_rx_data);
         }
     }
 
@@ -182,14 +181,14 @@ NFCSTATUS phNxpNciHal_kovio_rsp_ext(uint8_t *p_ntf, uint16_t *p_len)
                 send_to_upper_kovio = 0;
             }
 
-            if (!rf_deactive_cmd)
+            if(!rf_deactive_cmd)
             {
-                NXPLOG_NCIHAL_D ("Send RF deactivate command to NFCC");
-                status = phNxpNciHal_rf_deactivate ();
+                NXPLOG_NCIHAL_D("Send RF deactivate command to NFCC");
+                status = phNxpNciHal_rf_deactivate();
             }
             else
             {
-                NXPLOG_NCIHAL_D ("RF deactivate command is already sent to NFCC");
+                NXPLOG_NCIHAL_D("RF deactivate command is already sent to NFCC");
                 disable_kovio = TRUE;
                 send_to_upper_kovio = 0;
             }
@@ -216,7 +215,7 @@ NFCSTATUS phNxpNciHal_kovio_rsp_ext(uint8_t *p_ntf, uint16_t *p_len)
             }
         }
     }
-    else if((p_ntf[0]==0x41)&&(p_ntf[1]==0x06)&&(p_ntf[2]==0x01))
+    else if((p_ntf[0]==0x41)&&(p_ntf[1]==0x06)&&(p_ntf[2]==0x01)&&(p_ntf[3]==0x00))
     {
         rf_deactive_cmd = FALSE;
         if(kovio_detected == 1)

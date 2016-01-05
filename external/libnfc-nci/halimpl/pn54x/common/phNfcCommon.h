@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2014 NXP Semiconductors
+ * Copyright (C) 2015 NXP Semiconductors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@
 #endif
 
 /* HAL Version number (Updated as per release) */
-#define NXP_MW_VERSION_MAJ  (1U)
+#define NXP_MW_VERSION_MAJ  (2U)
 #define NXP_MW_VERSION_MIN  (0U)
 
 /*

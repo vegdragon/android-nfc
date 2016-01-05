@@ -7,3 +7,8 @@ git add -f external/libnfc-nci/
 git add -f build/target/product/core.mk
 git add -f build/core/tasks/check_boot_jars/package_whitelist.txt
 
+# After merge nfc MW
+git add -f frameworks/base/nxp-nfc-gsma
+git add -f frameworks/base/core/java/com/nxp/
+git add -f frameworks/base/core/java/com/vzw/
+

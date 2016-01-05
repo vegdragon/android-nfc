@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2015 NXP Semiconductors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <string.h>
-#if !defined (NXPLOG__H_INCLUDED)
+/* ############################################### Header Includes ################################################ */
+#if ! defined (NXPLOG__H_INCLUDED)
 #    include "phNxpLog.h"
 #    include "phNxpConfig.h"
 #endif
@@ -250,12 +250,12 @@ static void phNxpLog_SetNciTxLogLevel (uint8_t level)
  ******************************************************************************/
 void phNxpLog_InitializeLogLevel(void)
 {
-    uint8_t level = phNxpLog_SetGlobalLogLevel ();
-    phNxpLog_SetHALLogLevel (level);
-    phNxpLog_SetExtnsLogLevel (level);
-    phNxpLog_SetTmlLogLevel (level);
-    phNxpLog_SetDnldLogLevel (level);
-    phNxpLog_SetNciTxLogLevel (level);
+    uint8_t level = phNxpLog_SetGlobalLogLevel();
+    phNxpLog_SetHALLogLevel(level);
+    phNxpLog_SetExtnsLogLevel(level);
+    phNxpLog_SetTmlLogLevel(level);
+    phNxpLog_SetDnldLogLevel(level);
+    phNxpLog_SetNciTxLogLevel(level);
 
     ALOGD ("%s: global =%u, Fwdnld =%u, extns =%u, \
                 hal =%u, tml =%u, ncir =%u, \
