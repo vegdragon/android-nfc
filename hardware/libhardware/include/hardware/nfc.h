@@ -54,6 +54,7 @@ __BEGIN_DECLS
  */
 #define NFC_NCI_HARDWARE_MODULE_ID "nfc_nci"
 #define NFC_NCI_BCM2079X_HARDWARE_MODULE_ID "nfc_nci.bcm2079x"
+#define NFC_NCI_NXP_PN54X_HARDWARE_MODULE_ID "nfc_nci.pn54x"
 #define NFC_NCI_CONTROLLER "nci"
 
 /*
@@ -190,6 +191,12 @@ typedef struct nfc_nci_device {
      * HAL_OPEN_CPLT_EVT will notify when operation is complete.
      */
     int (*power_cycle)(const struct nfc_nci_device *p_dev);
+    /*
+    * (*ioctl)() For P61 power management synchronization
+    * between NFC Wired and SPI.
+    */
+    int (*ioctl)(const struct nfc_nci_device *p_dev, long arg, void *p_data);
+
 } nfc_nci_device_t;
 
 /*
