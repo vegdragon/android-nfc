@@ -25,4 +25,5 @@ prebuilts/
 sdk/
 system/
 tools/
-
+kernel_log.txt
+mw_log.txt
