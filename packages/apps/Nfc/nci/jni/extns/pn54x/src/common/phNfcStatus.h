@@ -88,7 +88,8 @@
 /*
  * Device specifier/handle value is invalid for the operation
  */
-#define NFCSTATUS_INVALID_DEVICE                              (0x0006)
+// #define NFCSTATUS_INVALID_DEVICE                              (0x0006)
+#define NFCSTATUS_INVALID_DEVICE                              (-6)
 
 /*
  * The function executed successfully but could have returned
