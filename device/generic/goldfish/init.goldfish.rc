@@ -29,6 +29,12 @@ on boot
     stop dund
     stop akmd
 
+# NXP NFC
+    # setprop ro.nfc.port "I2C"
+    chmod 0660 /dev/pn54x
+    chown nfc nfc /dev/pn54x
+
+
 # start essential services
     start qemud
     start goldfish-logcat
