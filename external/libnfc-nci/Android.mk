@@ -56,6 +56,11 @@ else
 LOCAL_CFLAGS += -DNFC_NXP_ESE=FALSE
 endif
 
+#Add debug flag
+LOCAL_CFLAGS += -ggdb
+LOCAL_STRIP_MODULE = false
+
+
 #### Select the CHIP ####
 D_CFLAGS += -DNFC_NXP_CHIP_TYPE=PN548C2
 

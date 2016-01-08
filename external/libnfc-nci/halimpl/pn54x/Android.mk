@@ -64,6 +64,10 @@ ifeq ($(PN548C2),2)
 LOCAL_CFLAGS += -DPN548C2=2
 endif
 
+#Add debug flag
+LOCAL_CFLAGS += -ggdb
+LOCAL_STRIP_MODULE = false
+
 #### Select the CHIP ####
 LOCAL_CFLAGS += -DNFC_NXP_CHIP_TYPE=PN548C2
 

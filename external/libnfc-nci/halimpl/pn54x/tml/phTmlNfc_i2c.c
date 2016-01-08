@@ -165,7 +165,9 @@ int phTmlNfc_i2c_read(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToRead)
     }
     else
     {
+        NXPLOG_TML_D ("%s(%d): totalBtyesToRead=%d, numRead=%d", __FUNCTION__, __LINE__, totalBtyesToRead, numRead);
         ret_Read = read((intptr_t)pDevHandle, pBuffer, totalBtyesToRead - numRead);
+        NXPLOG_TML_D ("%s: ret_Read=%d", __FUNCTION__, ret_Read);
         if (ret_Read > 0)
         {
             numRead += ret_Read;
@@ -192,7 +194,9 @@ int phTmlNfc_i2c_read(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToRead)
 
         if(numRead < totalBtyesToRead)
         {
+            NXPLOG_TML_D ("%s(%d): totalBtyesToRead=%d, numRead=%d", __FUNCTION__, __LINE__, totalBtyesToRead, numRead);
             ret_Read = read((intptr_t)pDevHandle, pBuffer, totalBtyesToRead - numRead);
+            NXPLOG_TML_D ("%s: ret_Read=%d", __FUNCTION__, ret_Read);
             if (ret_Read != totalBtyesToRead - numRead)
             {
                 NXPLOG_TML_E("_i2c_read() [hdr] errno : %x",errno);
@@ -211,7 +215,12 @@ int phTmlNfc_i2c_read(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToRead)
         {
             totalBtyesToRead = pBuffer[NORMAL_MODE_LEN_OFFSET] + NORMAL_MODE_HEADER_LEN;
         }
+
+        NXPLOG_TML_D ("%s(%d): totalBtyesToRead=%d, numRead=%d", __FUNCTION__, __LINE__, totalBtyesToRead, numRead);
         ret_Read = read((intptr_t)pDevHandle, (pBuffer + numRead), totalBtyesToRead - numRead);
+        NXPLOG_TML_D ("%s: ret_Read=%d", __FUNCTION__, ret_Read);
+        phNxpNciHal_print_packet("RECV",(pBuffer + numRead), totalBtyesToRead - numRead);
+        phNxpNciHal_print_packet("RECV",(pBuffer), totalBtyesToRead);
         if (ret_Read > 0)
         {
             numRead += ret_Read;
@@ -264,6 +273,8 @@ int phTmlNfc_i2c_write(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToWrite)
         NXPLOG_TML_E("i2c_write() data larger than maximum I2C  size,enable I2C fragmentation");
         return -1;
     }
+
+    NXPLOG_TML_D("numWrote=%d, nNbBytesToWrite=%d", numWrote, nNbBytesToWrite);
     while (numWrote < nNbBytesToWrite)
     {
         if(fragmentation_enabled == I2C_FRAGMENTATION_ENABLED && nNbBytesToWrite > FRAGMENTSIZE_MAX)
@@ -277,6 +288,8 @@ int phTmlNfc_i2c_write(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToWrite)
                 numBytes = nNbBytesToWrite;
             }
         }
+    
+        NXPLOG_TML_D("WRITING: bytes to write = %d", numBytes - numWrote);
         ret = write((intptr_t)pDevHandle, pBuffer + numWrote, numBytes - numWrote);
         if (ret > 0)
         {
@@ -301,6 +314,8 @@ int phTmlNfc_i2c_write(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToWrite)
             return -1;
         }
     }
+
+    NXPLOG_TML_D("%s: exiting... numWrote=%d", __FUNCTION__, numWrote);
 
     return numWrote;
 }

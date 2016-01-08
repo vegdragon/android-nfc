@@ -1094,7 +1094,7 @@ public class NfcService implements DeviceHostListener {
                     if (mPrefs.getBoolean(PREF_NFC_ON, NFC_ON_DEFAULT) &&
                             (!mIsAirplaneSensitive || !isAirplaneModeOn() || airplaneOverride)) {
                         Log.d(TAG, "NFC is on. Doing normal stuff");
-                        enableInternal();
+                        // enableInternal();
                     } else {
                         Log.d(TAG, "NFC is off.  Checking firmware version");
                         mDeviceHost.checkFirmware();
