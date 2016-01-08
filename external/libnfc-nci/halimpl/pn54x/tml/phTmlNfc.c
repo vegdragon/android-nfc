@@ -116,7 +116,7 @@ NFCSTATUS phTmlNfc_Init(pphTmlNfc_Config_t pConfig)
             if (NFCSTATUS_SUCCESS != wInitStatus)
             {
                 wInitStatus = PHNFCSTVAL(CID_NFC_TML, NFCSTATUS_INVALID_DEVICE);
-                gpphTmlNfc_Context->pDevHandle = (void *) NFCSTATUS_INVALID_DEVICE;
+                gpphTmlNfc_Context->pDevHandle = NULL;
             }
             else
             {
@@ -375,7 +375,7 @@ static void phTmlNfc_TmlThread(void *pParam)
             dwNoBytesWrRd = PH_TMLNFC_RESET_VALUE;
 
             /* Read the data from the file onto the buffer */
-            if (NFCSTATUS_INVALID_DEVICE != (uintptr_t)gpphTmlNfc_Context->pDevHandle)
+            if (NULL != (uintptr_t)gpphTmlNfc_Context->pDevHandle)
             {
                 NXPLOG_TML_D("PN54X - Invoking I2C Read.....\n");
                 dwNoBytesWrRd = phTmlNfc_i2c_read(gpphTmlNfc_Context->pDevHandle, temp, 260);
@@ -494,11 +494,12 @@ static void phTmlNfc_TmlWriterThread(void *pParam)
                 /* Variable to fetch the actual number of bytes written */
                 dwNoBytesWrRd = PH_TMLNFC_RESET_VALUE;
                 /* Write the data in the buffer onto the file */
-                NXPLOG_TML_D("PN54X - Invoking I2C Write.....\n");
+                NXPLOG_TML_D("PN54X - Invoking I2C Write.....(%d)\n", gpphTmlNfc_Context->tWriteInfo.wLength);
                 dwNoBytesWrRd = phTmlNfc_i2c_write(gpphTmlNfc_Context->pDevHandle,
                         gpphTmlNfc_Context->tWriteInfo.pBuffer,
                         gpphTmlNfc_Context->tWriteInfo.wLength
                         );
+                NXPLOG_TML_D("PN54X - I2C Write returned (%d)\n", dwNoBytesWrRd);
 
                 /* Try I2C Write Five Times, if it fails : Raju */
                 if (-1 == dwNoBytesWrRd)
@@ -517,6 +518,7 @@ static void phTmlNfc_TmlWriterThread(void *pParam)
                 }
                 else
                 {
+                    NXPLOG_TML_D("PN54X - Printing packet.....\n");
                     phNxpNciHal_print_packet("SEND", gpphTmlNfc_Context->tWriteInfo.pBuffer,
                             gpphTmlNfc_Context->tWriteInfo.wLength);
                 }
