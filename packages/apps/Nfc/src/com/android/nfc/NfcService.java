@@ -163,7 +163,7 @@ public class NfcService implements DeviceHostListener {
     public static final String PREF = "NfcServicePrefs";
 
     static final String PREF_NFC_ON = "nfc_on";
-    static final boolean NFC_ON_DEFAULT = true;
+    static final boolean NFC_ON_DEFAULT = false;
     static final String PREF_NDEF_PUSH_ON = "ndef_push_on";
     static final boolean NDEF_PUSH_ON_DEFAULT = true;
     static final String PREF_FIRST_BEAM = "first_beam";
@@ -292,7 +292,8 @@ public class NfcService implements DeviceHostListener {
     // Time to wait for NFC controller to initialize before watchdog
     // goes off. This time is chosen large, because firmware download
     // may be a part of initialization.
-    static final int INIT_WATCHDOG_MS = 90000;
+    // static final int INIT_WATCHDOG_MS = 90000;
+    static final int INIT_WATCHDOG_MS = 9000;
     static final int INIT_WATCHDOG_LS_MS = 180000;
     // Time to wait for routing to be applied before watchdog
     // goes off
@@ -1088,11 +1089,12 @@ public class NfcService implements DeviceHostListener {
                 case TASK_BOOT:
                     Log.d(TAG, "checking on firmware download");
                     boolean airplaneOverride = mPrefs.getBoolean(PREF_AIRPLANE_OVERRIDE, false);
+                    
+                    Log.i(TAG, "checking PREF_NFC_ON...");
                     if (mPrefs.getBoolean(PREF_NFC_ON, NFC_ON_DEFAULT) &&
                             (!mIsAirplaneSensitive || !isAirplaneModeOn() || airplaneOverride)) {
                         Log.d(TAG, "NFC is on. Doing normal stuff");
-                        // JIAN: nfc is off by default
-                        // enableInternal();
+                        enableInternal();
                     } else {
                         Log.d(TAG, "NFC is off.  Checking firmware version");
                         mDeviceHost.checkFirmware();
