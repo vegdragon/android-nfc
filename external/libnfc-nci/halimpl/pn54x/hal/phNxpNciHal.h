@@ -42,8 +42,8 @@ typedef enum
 } phNxpNci_HalStatus;
 
 /* Macros to enable and disable extensions */
-#define HAL_ENABLE_EXT()    (nxpncihal_ctrl.hal_ext_enabled = 1)
-#define HAL_DISABLE_EXT()   (nxpncihal_ctrl.hal_ext_enabled = 0)
+#define HAL_ENABLE_EXT()    NXPLOG_NCIHAL_D("%s(%d):HAL_ENABLE_EXT",__FUNCTION__,__LINE__);(nxpncihal_ctrl.hal_ext_enabled = 1)
+#define HAL_DISABLE_EXT()   NXPLOG_NCIHAL_D("%s(%d):HAL_DISABLE_EXT",__FUNCTION__,__LINE__);(nxpncihal_ctrl.hal_ext_enabled = 0)
 
 /* NCI Control structure */
 typedef struct phNxpNciHal_Control

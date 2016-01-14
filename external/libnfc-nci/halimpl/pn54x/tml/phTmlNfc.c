@@ -478,7 +478,7 @@ static void phTmlNfc_TmlWriterThread(void *pParam)
     /* Writer thread loop shall be running till shutdown is invoked */
     while (gpphTmlNfc_Context->bThreadDone)
     {
-        NXPLOG_TML_D("PN54X - Tml Writer Thread Running................\n");
+        NXPLOG_TML_D("PN54X - Tml Writer Thread Running, sem_wait(txSemaphore)................\n");
         sem_wait(&gpphTmlNfc_Context->txSemaphore);
         /* If Tml write is requested */
         if (1 == gpphTmlNfc_Context->tWriteInfo.bEnable)
@@ -495,6 +495,8 @@ static void phTmlNfc_TmlWriterThread(void *pParam)
                 dwNoBytesWrRd = PH_TMLNFC_RESET_VALUE;
                 /* Write the data in the buffer onto the file */
                 NXPLOG_TML_D("PN54X - Invoking I2C Write.....(%d)\n", gpphTmlNfc_Context->tWriteInfo.wLength);
+                phNxpNciHal_print_packet("SEND", gpphTmlNfc_Context->tWriteInfo.pBuffer,
+                            gpphTmlNfc_Context->tWriteInfo.wLength);
                 dwNoBytesWrRd = phTmlNfc_i2c_write(gpphTmlNfc_Context->pDevHandle,
                         gpphTmlNfc_Context->tWriteInfo.pBuffer,
                         gpphTmlNfc_Context->tWriteInfo.wLength
@@ -715,6 +717,8 @@ NFCSTATUS phTmlNfc_Write(uint8_t *pBuffer, uint16_t wLength, pphTmlNfc_TransactC
 {
     NFCSTATUS wWriteStatus;
 
+    NXPLOG_NCIHAL_D("%s(%d): entering...", __FUNCTION__, __LINE__);
+
     /* Check whether TML is Initialized */
 
     if (NULL != gpphTmlNfc_Context)
@@ -763,6 +767,7 @@ NFCSTATUS phTmlNfc_Write(uint8_t *pBuffer, uint16_t wLength, pphTmlNfc_TransactC
         wWriteStatus = PHNFCSTVAL(CID_NFC_TML, NFCSTATUS_NOT_INITIALISED);
     }
 
+    NXPLOG_NCIHAL_D("%s(%d): exiting(%d)...", __FUNCTION__, __LINE__, wWriteStatus);
     return wWriteStatus;
 }
 

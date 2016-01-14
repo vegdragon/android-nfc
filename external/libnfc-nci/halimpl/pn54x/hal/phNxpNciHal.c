@@ -772,6 +772,8 @@ int phNxpNciHal_write_unlocked(uint16_t data_len, const uint8_t *p_data)
     nxpncihal_ctrl.retry_cnt = 0;
     static uint8_t reset_ntf[] = {0x60, 0x00, 0x06, 0xA0, 0x00, 0xC7, 0xD4, 0x00, 0x00};
 
+    NXPLOG_NCIHAL_D("%s(%d): entering...", __FUNCTION__, __LINE__);
+
     /* Create the local semaphore */
     if (phNxpNciHal_init_cb_data(&cb_data, NULL) != NFCSTATUS_SUCCESS)
     {
@@ -845,8 +847,10 @@ int phNxpNciHal_write_unlocked(uint16_t data_len, const uint8_t *p_data)
         }
     }
 
-    clean_and_return:
+clean_and_return:
     phNxpNciHal_cleanup_cb_data(&cb_data);
+
+    NXPLOG_NCIHAL_D("%s(%d): exiting...", __FUNCTION__, __LINE__);
     return data_len;
 }
 
@@ -903,7 +907,7 @@ static void phNxpNciHal_read_complete(void *pContext, phTmlNfc_TransactInfo_t *p
 
     if (pInfo->wStatus == NFCSTATUS_SUCCESS)
     {
-        NXPLOG_NCIHAL_D("read successful status = 0x%x", pInfo->wStatus);
+        NXPLOG_NCIHAL_D("%s: read successful status = 0x%x", __FUNCTION__, pInfo->wStatus);
 
         nxpncihal_ctrl.p_rx_data = pInfo->pBuff;
         nxpncihal_ctrl.rx_data_len = pInfo->wLength;
@@ -911,6 +915,12 @@ static void phNxpNciHal_read_complete(void *pContext, phTmlNfc_TransactInfo_t *p
         status = phNxpNciHal_process_ext_rsp (nxpncihal_ctrl.p_rx_data, &nxpncihal_ctrl.rx_data_len);
 
         phNxpNciHal_print_res_status(nxpncihal_ctrl.p_rx_data,  &nxpncihal_ctrl.rx_data_len);
+
+        NXPLOG_NCIHAL_D("%s: nxpncihal_ctrl.hal_ext_enabled(%d), nxpncihal_ctrl.p_rx_data[0x00](0x%02X)", 
+            __FUNCTION__,
+            nxpncihal_ctrl.hal_ext_enabled,
+            nxpncihal_ctrl.p_rx_data[0x00]);
+        
         /* Check if response should go to hal module only */
         if (nxpncihal_ctrl.hal_ext_enabled == 1
                 && (nxpncihal_ctrl.p_rx_data[0x00] & 0xF0) == 0x40)
@@ -936,10 +946,13 @@ static void phNxpNciHal_read_complete(void *pContext, phTmlNfc_TransactInfo_t *p
         NXPLOG_NCIHAL_E("read error status = 0x%x", pInfo->wStatus);
     }
 
+    NXPLOG_NCIHAL_D("%s: nxpncihal_ctrl.halStatus(%d)", __FUNCTION__, nxpncihal_ctrl.halStatus);
     if(nxpncihal_ctrl.halStatus == HAL_STATUS_CLOSE)
     {
         return;
     }
+
+    NXPLOG_NCIHAL_D("%s: Read again because read must be pending always", __FUNCTION__);
     /* Read again because read must be pending always.*/
     status = phTmlNfc_Read(
             Rx_data,
@@ -2470,21 +2483,26 @@ retry_send_ext:
         return status;
     }
     rf_val = phNxpNciRfSet.p_rx_data[10];
+    NXPLOG_NCIHAL_D("%s(%d): rf_val(0x%02X)", __FUNCTION__, __LINE__, rf_val);
     isfound = (GetNxpNumValue(NAME_NXP_CHINA_TIANJIN_RF_ENABLED, (void *)&rf_enable, sizeof(rf_enable)));
     if(isfound >0)
     {
         enable_bit = rf_val & 0x40;
+        NXPLOG_NCIHAL_D("%s(%d): enable_bit(0x%02X), rf_enable(%d)", __FUNCTION__, __LINE__, enable_bit, rf_enable);
         if((enable_bit != 0x40) && (rf_enable == 1))
         {
             phNxpNciRfSet.p_rx_data[10] |= 0x40;   // Enable if it is disabled
+            NXPLOG_NCIHAL_D("%s(%d): phNxpNciRfSet.p_rx_data[10](0x%02X)", __FUNCTION__, __LINE__, phNxpNciRfSet.p_rx_data[10]);
         }
         else if((enable_bit == 0x40) && (rf_enable == 0))
         {
             phNxpNciRfSet.p_rx_data[10] &= 0xBF;  // Disable if it is Enabled
+            NXPLOG_NCIHAL_D("%s(%d): phNxpNciRfSet.p_rx_data[10](0x%02X)", __FUNCTION__, __LINE__, phNxpNciRfSet.p_rx_data[10]);
         }
         else
         {
             send_flag = FALSE;  // No need to change in RF setting
+            NXPLOG_NCIHAL_D("%s(%d): send_flag(%d)", __FUNCTION__, __LINE__, send_flag);
         }
 
         if(send_flag == TRUE)
@@ -2720,6 +2738,7 @@ static void phNxpNciHal_print_res_status( uint8_t *p_rx_data, uint16_t *p_len)
                                      "STATUS_MESSAGE_SIZE_EXCEEDED",
                                      "STATUS_UNDEFINED"};
     int status_byte;
+    NXPLOG_NCIHAL_D("%s: entering... p_rx_data[0]=0x%02X, p_rx_data[1]=0x%02X", __FUNCTION__, p_rx_data[0], p_rx_data[1]);
     if(p_rx_data[0] == 0x40 && (p_rx_data[1] == 0x02 || p_rx_data[1] == 0x03))
     {
         if(p_rx_data[2] &&  p_rx_data[3]<=10)
@@ -2746,13 +2765,13 @@ static void phNxpNciHal_print_res_status( uint8_t *p_rx_data, uint16_t *p_len)
             for(i=0; i<* p_len; i++)
             {
                 phNxpNciRfSet.p_rx_data[i] = p_rx_data[i];
-                //NXPLOG_NCIHAL_D("%s: response status =0x%x",__FUNCTION__,p_rx_data[i]);
+                NXPLOG_NCIHAL_D("%s: response status =0x%x",__FUNCTION__,p_rx_data[i]);
             }
 
         }
     }
 
-if((p_rx_data[2])&&(config_access == TRUE))
+    if((p_rx_data[2])&&(config_access == TRUE))
     {
         if(p_rx_data[3]!=NFCSTATUS_SUCCESS)
         {
@@ -2760,4 +2779,6 @@ if((p_rx_data[2])&&(config_access == TRUE))
             phNxpNciHal_close();
         }
     }
+
+    NXPLOG_NCIHAL_D("%s: exiting...", __FUNCTION__);
 }
