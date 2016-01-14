@@ -130,6 +130,8 @@ int phTmlNfc_i2c_read(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToRead)
 
     int i;
     UNUSED(nNbBytesToRead);
+
+    NXPLOG_TML_D ("%s(%d): enter, nNbBytesToRead=%d", __FUNCTION__, __LINE__, nNbBytesToRead);
     if (NULL == pDevHandle)
     {
         return -1;
@@ -152,6 +154,7 @@ int phTmlNfc_i2c_read(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToRead)
     tv.tv_sec = 2;
     tv.tv_usec = 1;
 
+    NXPLOG_TML_D ("%s(%d): selecting...", __FUNCTION__, __LINE__);
     ret_Select = select((int)((intptr_t)pDevHandle + (int)1), &rfds, NULL, NULL, &tv);
     if (ret_Select < 0)
     {
@@ -241,6 +244,8 @@ int phTmlNfc_i2c_read(void *pDevHandle, uint8_t * pBuffer, int nNbBytesToRead)
             return -1;
         }
     }
+
+    NXPLOG_TML_D ("%s(%d): exit, numRead=%d", __FUNCTION__, __LINE__, numRead);
     return numRead;
 }
 
